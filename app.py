@@ -4,6 +4,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import io
 import base64
+import os
+import tempfile
+
+# Créer un répertoire temporaire pour Matplotlib
+os.environ["MPLCONFIGDIR"] = tempfile.mkdtemp()
 
 app = Flask(__name__)
 
