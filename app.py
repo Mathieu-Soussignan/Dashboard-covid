@@ -15,8 +15,8 @@ app = Flask(__name__)
 
 def get_covid_data():
     url = "https://covid.ourworldindata.org/data/owid-covid-data.csv"
-    data = pd.read_csv(url)
-    france_data = data[data["location"] == "France"]
+    chunks = pd.read_csv(url, chunksize=10000, low_memory=False)
+    france_data = pd.concat(chunk[chunk["location"] == "France"] for chunk in chunks)
     france_data["date"] = pd.to_datetime(france_data["date"])
     france_data = france_data[["date", "new_cases", "new_deaths"]]
     return france_data
@@ -27,7 +27,7 @@ def index():
     france_data = get_covid_data()
 
     sns.set(style="darkgrid")
-    fig, ax = plt.subplots(2, 1, figsize=(14, 10))
+    fig, ax = plt.subplots(2, 1, figsize=(10, 8))  # Réduire la taille du graphique
 
     sns.lineplot(x="date", y="new_cases", data=france_data, ax=ax[0])
     ax[0].set_title("Nouveaux Cas Quotidiens en France")
